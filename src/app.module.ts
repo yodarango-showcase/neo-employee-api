@@ -1,9 +1,16 @@
+// nest
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+
+// modules
+import { EmployeeModule } from './employees/employee.module';
+
+// controllers/ services
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
+
+//env
 import { envs } from './config/env';
-import { EmployeeModule } from './employees/employee.module';
 
 @Module({
   imports: [EmployeeModule, MongooseModule.forRoot(envs.mongoConnString)],

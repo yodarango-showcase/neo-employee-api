@@ -1,18 +1,24 @@
-import { Schema } from 'mongoose';
+import * as mongoose from 'mongoose';
 
 // The following schema was created with globalization in mind, thus its properties type and requirement shall be reflected accordingly
-export const EmployeeSchema = new Schema({
+export const EmployeeSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    minlength: 4,
+    maxlength: 50,
   },
   email: {
     type: String,
     required: true, // does the company provide an email or does the emp keep a personal? It will be assumed that the company provides its own thus req = true
+    minlength: 4,
+    maxlength: 50,
   },
   phone: {
     type: Number,
     required: true,
+    minlength: 10,
+    maxlength: 20,
   },
   address: {
     line_one: { type: String, required: true },

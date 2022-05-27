@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { EmployeesConroller } from './employees.controller';
 import { EmployeesService } from './employees.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { EmployeeSchema } from './schemas/employee.schema';
 
 @Module({
