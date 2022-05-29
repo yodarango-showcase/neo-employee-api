@@ -27,6 +27,7 @@ export class EmployeesService {
     emHireDate: string,
     emDOB: string,
   ): Promise<Employee> {
+    // new imployee instance
     const newEmployee = new this.employeeModel({
       name: `${emName}`,
       email: `${emName.split(' ')[0]}@neo.com`, // takes the first name and assings it to the email. Of course in real life scenario unique email addresses would be created rather than running the risk to create duplicate emails
@@ -68,15 +69,20 @@ export class EmployeesService {
   }
 
   // get one employee by ID
-  async getEmployeeById(id: string): Promise<Employee> {
+  async getEmployeeById(id: string): Promise<Employee | undefined> {
     try {
-      return await this.employeeModel.findOne({ _id: id });
+      const foundUser = await this.employeeModel.findOne({ _id: id });
+      // if user does not exist
+      if (!foundUser) return undefined;
+
+      return foundUser;
     } catch (error) {
       console.log(error);
       return error;
     }
   }
 
+  // update one employee
   async updateEmployee(
     emId: string,
     emName: string,
@@ -90,43 +96,27 @@ export class EmployeesService {
     emCountry: string,
     emHireDate: string,
     emDOB: string,
-  ) {
+  ): Promise<Employee | undefined> {
+    // find the user to update
     const findEmployee = await this.employeeModel.findOne({ _id: emId });
-    if (emName) {
-      findEmployee.name = emName;
-    }
-    if (emEmail) {
-      findEmployee.email = emEmail;
-    }
-    if (emPhone) {
-      findEmployee.phone = emPhone;
-    }
-    if (emLineOne) {
-      findEmployee.address.line_one = emLineOne;
-    }
-    if (emLineTwo) {
-      findEmployee.address.line_two = emLineTwo;
-    }
-    if (emCity) {
-      findEmployee.address.city = emCity;
-    }
-    if (emState) {
-      findEmployee.address.state = emState;
-    }
-    if (emZip) {
-      findEmployee.address.zip = emZip;
-    }
-    if (emCountry) {
-      findEmployee.address.country = emCountry;
-    }
-    if (emHireDate) {
-      findEmployee.hire_date = emHireDate;
-    }
-    if (emDOB) {
-      findEmployee.DOB = emDOB;
-    }
-    console.log(emId, emName, emCity);
 
+    // if user does not exist
+    if (!findEmployee) return undefined;
+
+    // check the fields to be updated
+    if (emName) findEmployee.name = emName;
+    if (emEmail) findEmployee.email = emEmail;
+    if (emPhone) findEmployee.phone = emPhone;
+    if (emLineOne) findEmployee.address.line_one = emLineOne;
+    if (emLineTwo) findEmployee.address.line_two = emLineTwo;
+    if (emCity) findEmployee.address.city = emCity;
+    if (emState) findEmployee.address.state = emState;
+    if (emZip) findEmployee.address.zip = emZip;
+    if (emCountry) findEmployee.address.country = emCountry;
+    if (emHireDate) findEmployee.hire_date = emHireDate;
+    if (emDOB) findEmployee.DOB = emDOB;
+
+    // update the user
     try {
       const updatedUser = await findEmployee.save();
       return updatedUser;
@@ -137,9 +127,13 @@ export class EmployeesService {
   }
 
   // delete one user
-  async deleteEmployee(id: string): Promise<number> {
+  async deleteEmployee(id: string): Promise<number | undefined> {
     try {
       const deletedEmploye = await this.employeeModel.deleteOne({ _id: id });
+
+      // if user does not exist
+      if (!deletedEmploye) return undefined;
+
       return deletedEmploye.deletedCount;
     } catch (error) {
       console.log(error);

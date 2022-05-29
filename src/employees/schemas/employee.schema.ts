@@ -1,7 +1,7 @@
-import * as mongoose from 'mongoose';
+import { Schema } from 'mongoose';
 
 // The following schema was created with globalization in mind, thus its properties type and requirement shall be reflected accordingly
-export const EmployeeSchema = new mongoose.Schema({
+export const EmployeeSchema = new Schema({
   name: {
     type: String,
     required: true,

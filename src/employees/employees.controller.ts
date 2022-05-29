@@ -9,7 +9,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 // services/ interfaces
 import { EmployeesService } from './employees.service';
@@ -21,7 +21,11 @@ export class EmployeesConroller {
   // create the user
   @Post()
   @ApiBody({ type: CreateEmployeeDto })
-  @ApiCreatedResponse({ description: 'User creted' })
+  @ApiResponse({ status: 200, description: 'User created successfully' })
+  @ApiResponse({
+    status: 505,
+    description: 'Sorry, there was an internal error',
+  })
   async createEmployee(
     @Body('name') emName: string,
     @Body('phone') emPhone: number,
@@ -56,6 +60,11 @@ export class EmployeesConroller {
 
   //get all users
   @Get()
+  @ApiResponse({ status: 200, description: 'Success' })
+  @ApiResponse({
+    status: 505,
+    description: 'Sorry, there was an internal error',
+  })
   async findAll(@Query('index') index: string): Promise<Employee[]> {
     try {
       return await this.employeeService.findAll(index);
@@ -66,9 +75,18 @@ export class EmployeesConroller {
   }
 
   @Get(':id')
+  @ApiResponse({ status: 200, description: 'Success' })
+  @ApiResponse({
+    status: 404,
+    description: 'Resourse not found',
+  })
   async getEmployeeById(@Param('id') emID: string) {
     try {
-      return await this.employeeService.getEmployeeById(emID);
+      const employee = await this.employeeService.getEmployeeById(emID);
+
+      // typically I would return res.status(404) but I amm not 100% sure how to efficientlysure do this on NesrtJs
+      if (!employee) return 'User not found';
+      return employee;
     } catch (error) {
       console.log(error);
       return error;
@@ -76,6 +94,12 @@ export class EmployeesConroller {
   }
 
   @Patch(':id')
+  @ApiBody({ type: CreateEmployeeDto })
+  @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiResponse({
+    status: 505,
+    description: 'Sorry, there was an internal error',
+  })
   async updateOneEmployee(
     @Param('id') emId: string,
     @Body('name') emName: string,
@@ -89,9 +113,9 @@ export class EmployeesConroller {
     @Body('country') emCountry: string,
     @Body('hire_date') emHireDate: string,
     @Body('DOB') emDOB: string,
-  ): Promise<Employee> {
+  ): Promise<Employee | string> {
     try {
-      return await this.employeeService.updateEmployee(
+      const patchedUser = await this.employeeService.updateEmployee(
         emId,
         emName,
         emEmail,
@@ -105,12 +129,20 @@ export class EmployeesConroller {
         emHireDate,
         emDOB,
       );
+      // typically I would return res.status(404) but I amm not 100% sure how to efficientlysure do this on NesrtJs
+      if (!patchedUser) return 'User not found';
+      return patchedUser;
     } catch (error) {
       console.log(error);
     }
   }
 
   @Delete(':id')
+  @ApiResponse({ status: 200, description: 'User deleted successfully' })
+  @ApiResponse({
+    status: 505,
+    description: 'Sorry, there was an internal error',
+  })
   async deleteOneEmployee(@Param('id') emId: string) {
     return await this.employeeService.deleteEmployee(emId);
   }
