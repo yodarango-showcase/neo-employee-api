@@ -4,9 +4,10 @@
 
 ### Docker implementation was started but not finished, you can disregard Docker files
 
-1. Start the project by running command start:dev
-2. open project on http://localhost:3000/api
-3. There are 6 requests tyoes
+1. create an .env file in the root project and add a variable called MONGO_URI=<conn string provided in the email>
+2. Start the project by running command start:dev
+3. open project on http://localhost:3000/api
+4. There are 6 requests tyoes
 
 - _GET "/"_
 - responds with an HTML doc detialing the project's implementation and completion
