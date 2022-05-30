@@ -10,9 +10,11 @@ interface Address {
 export interface Employee {
   id?: string;
   name: string;
-  email: string;
+  email?: string;
   phone: number;
   address: Address;
   hire_date: string;
   DOB: string;
+  record_created?: string;
+  user_deleted?: string;
 }

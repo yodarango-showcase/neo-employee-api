@@ -47,6 +47,7 @@ export class EmployeesService {
     // save the new employee
     try {
       const insertedEmployee = await newEmployee.save();
+
       return insertedEmployee;
     } catch (error) {
       console.log(error);
@@ -54,14 +55,38 @@ export class EmployeesService {
     }
   }
 
-  // get all employees with pagination
-  async findAll(index: string): Promise<Employee[]> {
+  // get all ACTIVE employees (with pagination)
+  async findAllActive(index: string): Promise<Employee[]> {
     // parse the query
     const skip = parseInt(index);
 
     try {
       // pass the query to the skip method to paginate
-      return await this.employeeModel.find().limit(5).skip(skip).exec();
+      return await this.employeeModel
+        .find({ user_deleted: null })
+        .limit(2)
+        .skip(skip)
+        .sort({ record_created: -1 })
+        .exec();
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  // get all DELETED employees (with pagination)
+  async findAllDeleted(index: string): Promise<Employee[]> {
+    // parse the query
+    const skip = parseInt(index);
+
+    try {
+      // pass the query to the skip method to paginate
+      return await this.employeeModel
+        .find({ user_deleted: { $ne: null } })
+        .limit(2)
+        .skip(skip)
+        .sort({ user_deleted: -1 })
+        .exec();
     } catch (error) {
       console.log(error);
       return error;
@@ -119,6 +144,7 @@ export class EmployeesService {
     // update the user
     try {
       const updatedUser = await findEmployee.save();
+
       return updatedUser;
     } catch (error) {
       console.log(error);
@@ -126,15 +152,19 @@ export class EmployeesService {
     }
   }
 
-  // delete one user
-  async deleteEmployee(id: string): Promise<number | undefined> {
+  // delete one user (soft)
+  async deleteEmployee(id: string): Promise<Employee | undefined> {
     try {
-      const deletedEmploye = await this.employeeModel.deleteOne({ _id: id });
+      const deletedEmploye = await this.employeeModel.findOne({ _id: id });
 
       // if user does not exist
       if (!deletedEmploye) return undefined;
 
-      return deletedEmploye.deletedCount;
+      deletedEmploye.user_deleted = `${new Date()}`;
+
+      await deletedEmploye.save();
+
+      return deletedEmploye;
     } catch (error) {
       console.log(error);
       return error;

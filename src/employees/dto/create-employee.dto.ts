@@ -16,9 +16,8 @@ export class CreateEmployeeDto {
   readonly name: string;
 
   @IsEmail()
-  @IsNotEmpty()
   @ApiProperty({ type: String, description: 'email' })
-  readonly email: string;
+  readonly email?: string;
 
   @IsNotEmpty()
   @IsPhoneNumber()
@@ -39,7 +38,6 @@ export class CreateEmployeeDto {
   @ApiProperty({ type: String, description: 'City' })
   city: string;
 
-  @IsNotEmpty()
   @IsString()
   @ApiProperty({ type: String, description: 'State' })
   state?: string;

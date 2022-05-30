@@ -36,4 +36,14 @@ export const EmployeeSchema = new Schema({
     type: Date,
     required: true,
   },
+  user_deleted: {
+    type: Date,
+    required: false,
+    default: null,
+  },
+  record_created: {
+    type: Date,
+    required: false,
+    default: new Date(),
+  },
 });

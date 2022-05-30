@@ -65,9 +65,15 @@ export class EmployeesConroller {
     status: 505,
     description: 'Sorry, there was an internal error',
   })
-  async findAll(@Query('index') index: string): Promise<Employee[]> {
+  async findAll(
+    @Query('index') index: string,
+    @Query('deleted') deleted: string,
+  ): Promise<Employee[]> {
     try {
-      return await this.employeeService.findAll(index);
+      if (deleted === 'true') {
+        return await this.employeeService.findAllDeleted(index);
+      }
+      return await this.employeeService.findAllActive(index);
     } catch (error) {
       console.log(error);
       return error;
